@@ -2,7 +2,7 @@ import API from '../lib/api'
 
 export function handler (event, { succeed, fail }) {
   console.log(`event: ${JSON.stringify(event, null, 2)}`)
-  const { contents: { record: { id, apiName }, priorState, changeSet } } = event
+  const { record: { id, apiName }, priorState, changeSet } = event
   const request = API(event)
   const done = (e, res) => e ? fail(e) : succeed(res)
   const body = {...priorState, ...changeSet}
