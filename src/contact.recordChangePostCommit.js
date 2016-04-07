@@ -1,11 +1,12 @@
 import API from '../lib/api'
+import { merge } from 'ramda'
 
 export function handler (event, { succeed, fail }) {
   console.log(`event: ${JSON.stringify(event, null, 2)}`)
   const { record: { id, apiName }, priorState, changeSet } = event
   const request = API(event)
   const done = (e, res) => e ? fail(e) : succeed(res)
-  const body = {...priorState, ...changeSet}
+  const body = merge(priorState, changeSet)
 
   if (changeSet.first_name || changeSet.first_name) {
     console.log('No name change, exiting.')

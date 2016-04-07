@@ -1,14 +1,16 @@
 {
-  "lanetix": [{
-    "event": {
-      "name": "recordChangePostCommit",
-      "recordType": "contact"
-    },
-    "environment": {
-      "timeout": 100
-    },
-    "path": "dist/contact.recordChangePostCommit.js"
-  }],
+  "lanetix": [
+    {
+      "event": {
+        "name": "recordChangePostCommit",
+        "recordType": "contact"
+      },
+      "environment": {
+        "timeout": 100
+      },
+      "path": "dist/contact.recordChangePostCommit.js"
+    }
+  ],
   "scripts": {
     "test": "gulp",
     "lint": "gulp lint",
@@ -75,5 +77,8 @@
     "vinyl-source-stream": "^1.1.0",
     "webpack": "^1.12.9",
     "webpack-stream": "^3.1.0"
+  },
+  "dependencies": {
+    "ramda": "^0.20.1"
   }
 }
