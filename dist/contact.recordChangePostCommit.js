@@ -66,24 +66,28 @@ module.exports =
 	  var fail = _ref.fail;
 
 	  console.log('event: ' + JSON.stringify(event, null, 2));
-	  var _event$record = event.record;
-	  var id = _event$record.id;
-	  var apiName = _event$record.apiName;
-	  var priorState = event.priorState;
-	  var changeSet = event.changeSet;
+	  var _event$payload = event.payload;
+	  var _event$payload$record = _event$payload.record;
+	  var id = _event$payload$record.id;
+	  var apiName = _event$payload$record.apiName;
+	  var priorState = _event$payload.priorState;
+	  var changeSet = _event$payload.changeSet;
 
 	  var request = (0, _api2.default)(event);
 	  var done = function done(e, res) {
 	    return e ? fail(e) : succeed(res);
 	  };
-	  var finalState = _extends({}, priorState, changeSet);
 
-	  if (changeSet.first_name || changeSet.first_name) {
+	  if (!changeSet.hasOwnProperty('first_name') && !changeSet.hasOwnProperty('last_name')) {
 	    console.log('No name change, exiting.');
-	    return;
+	    return done();
 	  }
 
-	  var name = finalState.first_name && finalState.last_name ? finalState.first_name + ' ' + finalState.last_name : finalState.first_name ? finalState.first_name : finalState.last_name ? finalState.last_name : 'Unnamed Contact';
+	  var state = _extends({}, priorState, changeSet);
+	  var first_name = state.first_name;
+	  var last_name = state.last_name;
+
+	  var name = (first_name + ' ' + last_name).trim() || 'Unnamed Contact';
 
 	  console.log('Changing name from "' + priorState.name + '" to "' + name + '" with post to /v1/records/' + apiName + '/' + id + '.');
 
