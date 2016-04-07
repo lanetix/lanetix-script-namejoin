@@ -141,7 +141,7 @@ module.exports =
 	        } else {
 	          var error = new Error('HTTP Response: ' + res.statusCode);
 	          error.response = res;
-	          error.reponse.body = parseJSON(body);
+	          error.response.body = parseJSON(body);
 	          cb(error);
 	        }
 	      });
