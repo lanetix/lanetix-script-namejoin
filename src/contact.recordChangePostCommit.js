@@ -26,6 +26,6 @@ export function handler (event, { succeed, fail }) {
     body: { name }
   }, (res) => {
     console.log('res', res)
-    done(res)
+    done(null, res)
   })
 }
