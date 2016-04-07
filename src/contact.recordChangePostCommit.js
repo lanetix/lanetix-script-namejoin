@@ -24,5 +24,8 @@ export function handler (event, { succeed, fail }) {
     method: 'PATCH',
     path: `/v1/records/${apiName}/${id}`,
     body: { name }
-  }, done)
+  }, (res) => {
+    console.log('res', res)
+    done(res)
+  })
 }
