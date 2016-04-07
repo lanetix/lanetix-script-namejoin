@@ -65,7 +65,12 @@ module.exports =
 	  var succeed = _ref.succeed;
 	  var fail = _ref.fail;
 
-	  console.log('event: ' + JSON.stringify(event, null, 2));
+	  console.log('event', JSON.stringify(event, null, 2));
+
+	  var request = (0, _api2.default)(event);
+	  var done = function done(e, res) {
+	    return e ? fail(e) : succeed(res);
+	  };
 	  var _event$payload = event.payload;
 	  var _event$payload$record = _event$payload.record;
 	  var id = _event$payload$record.id;
@@ -73,32 +78,23 @@ module.exports =
 	  var priorState = _event$payload.priorState;
 	  var changeSet = _event$payload.changeSet;
 
-	  var request = (0, _api2.default)(event);
-	  var done = function done(e, res) {
-	    return e ? fail(e) : succeed(res);
-	  };
+	  var wasNameChanged = 'first_name' in changeSet || 'last_name' in changeSet;
+	  if (!wasNameChanged) return done(null, 'No name change');
 
-	  if (!changeSet.hasOwnProperty('first_name') && !changeSet.hasOwnProperty('last_name')) {
-	    console.log('No name change, exiting.');
-	    return done();
-	  }
+	  var _priorState$changeSet = _extends({}, priorState, changeSet);
 
-	  var state = _extends({}, priorState, changeSet);
-	  var first_name = state.first_name;
-	  var last_name = state.last_name;
+	  var first_name = _priorState$changeSet.first_name;
+	  var last_name = _priorState$changeSet.last_name;
 
 	  var name = (first_name + ' ' + last_name).trim() || 'Unnamed Contact';
 
 	  console.log('Changing name from "' + priorState.name + '" to "' + name + '" with post to /v1/records/' + apiName + '/' + id + '.');
 
-	  request({
+	  return request({
 	    method: 'PATCH',
 	    path: '/v1/records/' + apiName + '/' + id,
 	    body: { name: name }
-	  }, function (res) {
-	    console.log('res', res);
-	    done(null, res);
-	  });
+	  }, done);
 	}
 
 /***/ },
@@ -124,6 +120,8 @@ module.exports =
 	function API(_ref) {
 	  var jwt = _ref.jwt;
 
+	  if (!(jwt && typeof jwt === 'string')) throw new Error('Invalid JWT: ' + jwt);
+
 	  var defaults = {
 	    hostname: 'gateway.lanetix.com',
 	    headers: {
@@ -132,7 +130,9 @@ module.exports =
 	      'Content-Type': 'application/json'
 	    }
 	  };
+
 	  return function request(opts, cb) {
+	    if (opts.headers) opts.headers = _extends({}, defaults.headers, opts.headers);
 	    return _https2.default.request(_extends({}, defaults, opts), function (res) {
 	      var body = '';
 	      res.setEncoding('utf8');

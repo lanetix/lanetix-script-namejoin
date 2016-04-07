@@ -1,28 +1,22 @@
 import API from '../lib/api'
 
 export function handler (event, { succeed, fail }) {
-  console.log(`event: ${JSON.stringify(event, null, 2)}`)
-  const { payload: { record: { id, apiName }, priorState, changeSet } } = event
+  console.log('event', JSON.stringify(event, null, 2))
+
   const request = API(event)
   const done = (e, res) => e ? fail(e) : succeed(res)
+  const { record: { id, apiName }, priorState, changeSet } = event.payload
+  const wasNameChanged = 'first_name' in changeSet || 'last_name' in changeSet
+  if (!wasNameChanged) return done(null, 'No name change')
 
-  if (!changeSet.hasOwnProperty('first_name') && !changeSet.hasOwnProperty('last_name')) {
-    console.log('No name change, exiting.')
-    return done()
-  }
-
-  const state = { ...priorState, ...changeSet }
-  const { first_name, last_name } = state
+  const { first_name, last_name } = { ...priorState, ...changeSet }
   const name = `${first_name} ${last_name}`.trim() || 'Unnamed Contact'
 
   console.log(`Changing name from "${priorState.name}" to "${name}" with post to /v1/records/${apiName}/${id}.`)
 
-  request({
+  return request({
     method: 'PATCH',
     path: `/v1/records/${apiName}/${id}`,
     body: { name }
-  }, (res) => {
-    console.log('res', res)
-    done(null, res)
-  })
+  }, done)
 }
