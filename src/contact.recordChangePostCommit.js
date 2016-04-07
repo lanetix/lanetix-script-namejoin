@@ -18,7 +18,7 @@ export function handler (event, { succeed, fail }) {
   : finalState.last_name ? finalState.last_name
   : 'Unnamed Contact'
 
-  console.log(`Changing name from "${priorState.name}" to "${name}".`)
+  console.log(`Changing name from "${priorState.name}" to "${name}" with post to /v1/records/${apiName}/${id}.`)
 
   request({
     method: 'PATCH',
