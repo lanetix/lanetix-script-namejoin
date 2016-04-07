@@ -5,7 +5,7 @@ export function handler (event, { succeed, fail }) {
   const { record: { id, apiName }, priorState, changeSet } = event
   const request = API(event)
   const done = (e, res) => e ? fail(e) : succeed(res)
-  const body = {...priorState, ...changeSet}
+  const finalState = {...priorState, ...changeSet}
 
   if (changeSet.first_name || changeSet.first_name) {
     console.log('No name change, exiting.')
@@ -13,9 +13,9 @@ export function handler (event, { succeed, fail }) {
   }
 
   const name =
-  body.first_name && body.last_name ? `${body.first_name} ${body.last_name}`
-  : body.first_name ? body.first_name
-  : body.last_name ? body.last_name
+  finalState.first_name && finalState.last_name ? `${finalState.first_name} ${finalState.last_name}`
+  : finalState.first_name ? finalState.first_name
+  : finalState.last_name ? finalState.last_name
   : 'Unnamed Contact'
 
   console.log(`Changing name from "${priorState.name}" to "${name}".`)
