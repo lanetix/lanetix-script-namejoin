@@ -97,7 +97,7 @@ function build () {
       }))
       .pipe(gulp.dest(handler.folder))
       .pipe($.filter([handler.name + '.js', '!**/*.js.map']))
-      .pipe($.uglify())
+//      .pipe($.uglify())
       .pipe(gulp.dest(handler.folder))
   }))
 }
