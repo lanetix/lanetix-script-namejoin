@@ -75,20 +75,21 @@ module.exports =
 	  var _event$payload$record = _event$payload.record;
 	  var id = _event$payload$record.id;
 	  var apiName = _event$payload$record.apiName;
-	  var priorState = _event$payload.priorState;
-	  var changeSet = _event$payload.changeSet;
+	  var priorState = _event$payload.priorState || {};
+	  var changeSet = _event$payload.changeSet || {};
 
 	  var wasNameChanged = 'first_name' in changeSet || 'last_name' in changeSet;
 	  if (!wasNameChanged) return done(null, 'No name change');
 
 	  var _priorState$changeSet = _extends({}, priorState, changeSet);
 
-	  var first_name = _priorState$changeSet.first_name;
-	  var last_name = _priorState$changeSet.last_name;
+	  var first_name = _priorState$changeSet.first_name || '';
+	  var last_name = _priorState$changeSet.last_name || '';
 
 	  var name = (first_name + ' ' + last_name).trim() || 'Unnamed Contact';
+	  var fromPriorTo = priorState.name ? (' from "' + priorState.name + '" to "') : ' to "';
 
-	  console.log('Changing name from "' + priorState.name + '" to "' + name + '" with post to /v1/records/' + apiName + '/' + id + '.');
+	  console.log('Changing name' + fromPriorTo + name + '" with post to /v1/records/' + apiName + '/' + id + '.');
 
 	  return request({
 	    method: 'PATCH',
